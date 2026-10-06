@@ -39,6 +39,7 @@ export default function VIPRetention() {
   }, []);
 
   const atRiskVIPs = customers.filter((c) => c.tier === 'VIP' && c.is_at_risk);
+  const activeVIPs = customers.filter((c) => c.tier === 'VIP' && !c.is_at_risk);
 
   const filteredCustomers = customers.filter((c) => {
     if (tierFilter !== 'all' && c.tier !== tierFilter) return false;
