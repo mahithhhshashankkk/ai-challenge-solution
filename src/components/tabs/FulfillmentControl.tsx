@@ -3,7 +3,7 @@ import {
   Truck, PackageCheck, RotateCcw, Clock, CheckCircle2, Camera,
   AlertTriangle, Send, MapPin, XCircle, Eye,
 } from 'lucide-react';
-import { supabase } from '@/lib/supabase';
+import { isSupabaseConfigured, supabase } from '@/lib/supabase';
 import { useFilters } from '@/context/FilterContext';
 import { useToast } from '@/context/ToastContext';
 import { formatINR } from '@/lib/format';
@@ -22,6 +22,11 @@ export default function FulfillmentControl() {
 
   useEffect(() => {
     async function loadOrders() {
+      if (!isSupabaseConfigured) {
+        setLoading(false);
+        return;
+      }
+
       setLoading(true);
       const { data } = await supabase.from('orders').select('*').order('order_date', { ascending: false });
       if (data) setOrders(data);
