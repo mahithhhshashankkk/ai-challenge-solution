@@ -3,7 +3,7 @@ import {
   Crown, Users, Mail, MessageSquare, Target, Send, Star,
   TrendingUp, Clock, AlertTriangle, Gift, Search,
 } from 'lucide-react';
-import { supabase } from '@/lib/supabase';
+import { isSupabaseConfigured, supabase } from '@/lib/supabase';
 import { useFilters } from '@/context/FilterContext';
 import { useToast } from '@/context/ToastContext';
 import { formatINR, formatINRFull } from '@/lib/format';
@@ -26,6 +26,11 @@ export default function VIPRetention() {
 
   useEffect(() => {
     async function loadData() {
+      if (!isSupabaseConfigured) {
+        setLoading(false);
+        return;
+      }
+
       setLoading(true);
       const [custRes, tierRes] = await Promise.all([
         supabase.from('customers').select('*').order('total_profit', { ascending: false }),
@@ -39,7 +44,6 @@ export default function VIPRetention() {
   }, []);
 
   const atRiskVIPs = customers.filter((c) => c.tier === 'VIP' && c.is_at_risk);
-  const activeVIPs = customers.filter((c) => c.tier === 'VIP' && !c.is_at_risk);
 
   const filteredCustomers = customers.filter((c) => {
     if (tierFilter !== 'all' && c.tier !== tierFilter) return false;

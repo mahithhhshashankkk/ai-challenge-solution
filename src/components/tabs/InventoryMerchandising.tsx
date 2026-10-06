@@ -3,7 +3,7 @@ import {
   Package, Boxes, RefreshCw, Plus, Calculator, Trash2, Tag,
   Layers, AlertTriangle, TrendingDown, PackageCheck,
 } from 'lucide-react';
-import { supabase } from '@/lib/supabase';
+import { isSupabaseConfigured, supabase } from '@/lib/supabase';
 import { useFilters } from '@/context/FilterContext';
 import { useToast } from '@/context/ToastContext';
 import { formatINR } from '@/lib/format';
@@ -24,6 +24,11 @@ export default function InventoryMerchandising() {
 
   useEffect(() => {
     async function loadProducts() {
+      if (!isSupabaseConfigured) {
+        setLoading(false);
+        return;
+      }
+
       setLoading(true);
       const { data } = await supabase.from('products').select('*').order('sales_velocity', { ascending: false });
       if (data) setProducts(data);

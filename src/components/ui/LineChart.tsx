@@ -43,6 +43,14 @@ export default function LineChart({
   const buildAreaPath = (points: { x: number; y: number }[]) =>
     `${buildPath(points)} L ${points[points.length - 1].x} ${padding.top + chartHeight} L ${points[0].x} ${padding.top + chartHeight} Z`;
 
+  if (data.length === 0) {
+    return (
+      <div className="flex items-center justify-center text-sm text-neutral-400" style={{ height }}>
+        No chart data available
+      </div>
+    );
+  }
+
   return (
     <div>
       <div className="flex items-center gap-4 mb-3 text-xs text-neutral-500">
