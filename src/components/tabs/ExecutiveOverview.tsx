@@ -4,11 +4,10 @@ import {
   Percent, ArrowRight, Lightbulb, Target, Zap,
 } from 'lucide-react';
 import { supabase } from '@/lib/supabase';
-import { useFilters } from '@/context/FilterContext';
 import { useToast } from '@/context/ToastContext';
 import { formatINR } from '@/lib/format';
 import type {
-  KPIMetric, ExecutiveAlert, CategoryProfitability, DiscountElasticity,
+  ExecutiveAlert, CategoryProfitability, DiscountElasticity,
 } from '@/types';
 import KPICard from '@/components/ui/KPICard';
 import SectionCard from '@/components/ui/SectionCard';
@@ -18,7 +17,6 @@ import Badge from '@/components/ui/Badge';
 
 export default function ExecutiveOverview() {
   const { showToast } = useToast();
-  const [kpis, setKpis] = useState<KPIMetric[]>([]);
   const [alerts, setAlerts] = useState<ExecutiveAlert[]>([]);
   const [categories, setCategories] = useState<CategoryProfitability[]>([]);
   const [elasticity, setElasticity] = useState<DiscountElasticity[]>([]);
@@ -27,14 +25,12 @@ export default function ExecutiveOverview() {
   useEffect(() => {
     async function loadData() {
       setLoading(true);
-      const [kpiRes, alertRes, catRes, elasticRes] = await Promise.all([
-        supabase.from('kpi_metrics').select('*').order('sort_order'),
+      const [alertRes, catRes, elasticRes] = await Promise.all([
         supabase.from('executive_alerts').select('*').eq('is_active', true).order('sort_order'),
         supabase.from('category_profitability').select('*').order('sort_order'),
         supabase.from('discount_elasticity').select('*').order('sort_order'),
       ]);
 
-      if (kpiRes.data) setKpis(kpiRes.data);
       if (alertRes.data) setAlerts(alertRes.data);
       if (catRes.data) setCategories(catRes.data);
       if (elasticRes.data) setElasticity(elasticRes.data);
